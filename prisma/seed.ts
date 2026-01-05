@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient()
 
@@ -250,13 +251,14 @@ async function main() {
   console.log('✅ Products created:', products.count, 'items')
 
   // Create Admin User (password: admin123)
+  const hashedPassword = await bcrypt.hash('admin123', 10)
   const admin = await prisma.admin.upsert({
     where: { email: 'admin@infinitylounge.ro' },
     update: {},
     create: {
       email: 'admin@infinitylounge.ro',
-      password: '$2a$10$rGxPqCk7mK7vXJ5YjK5x5OqYZv3xKQJZ8fZ5qZ9qZ8qZ9qZ8qZ9qZ', // admin123 (will need to be properly hashed in production)
-      name: 'Admin User',
+      password: hashedPassword,
+      name: 'Admin INFINITY LOUNGE',
       role: 'admin',
       venueId: venue.id,
     },
