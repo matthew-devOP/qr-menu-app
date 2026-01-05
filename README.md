@@ -61,35 +61,154 @@ qr-menu-app/
 
 ### Prerequisites
 
-- Node.js 18+
-- PostgreSQL 14+
-- npm sau yarn
+- **Node.js** 18+ ([Download](https://nodejs.org/))
+- **PostgreSQL** 14+ ([Installation Guide](https://www.postgresql.org/download/))
+  - Alternatively: Use cloud database (Supabase, Railway, Neon - all have free tiers)
+- **npm** (comes with Node.js) or **yarn**
 
-### Instalare
+### Instalare Pas cu Pas
+
+#### 1. Clone Repository
 
 ```bash
-# Clone repository
 git clone https://github.com/matthew-devOP/qr-menu-app.git
 cd qr-menu-app
-
-# Install dependencies
-npm install
-
-# Setup environment variables
-cp .env.example .env
-# Edit .env cu configurările tale
-
-# Setup database
-npx prisma migrate dev
-
-# Seed initial data
-npx prisma db seed
-
-# Start development server
-npm run dev
 ```
 
-Aplicația va fi disponibilă la `http://localhost:3000`
+#### 2. Install Dependencies
+
+```bash
+npm install
+# sau
+yarn install
+```
+
+#### 3. Setup Environment Variables
+
+```bash
+# Copy example file
+cp .env.example .env
+
+# Edit .env cu un editor de text
+# nano .env
+# sau
+# code .env
+```
+
+**Configurări minime necesare:**
+
+```env
+# Database (required)
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/qr_menu_app"
+
+# App URL (required)
+NEXT_PUBLIC_APP_URL="http://localhost:3000"
+
+# NextAuth Secret (required - generate a secure key)
+NEXTAUTH_SECRET="generate-with-openssl-rand-base64-32"
+```
+
+**Generare NextAuth Secret:**
+```bash
+openssl rand -base64 32
+```
+
+#### 4. Setup Database
+
+**Opțiunea A: PostgreSQL Local**
+
+```bash
+# Create database
+createdb qr_menu_app
+
+# Run Prisma migrations
+npm run prisma:migrate
+
+# Seed database cu date sample
+npm run prisma:seed
+```
+
+**Opțiunea B: Cloud Database (Supabase/Railway)**
+
+1. Creează cont pe [Supabase](https://supabase.com) sau [Railway](https://railway.app)
+2. Creează un nou proiect PostgreSQL
+3. Copiază connection string în `.env` la `DATABASE_URL`
+4. Run migrations:
+   ```bash
+   npm run prisma:migrate
+   npm run prisma:seed
+   ```
+
+#### 5. Start Development Server
+
+```bash
+npm run dev
+# sau
+yarn dev
+```
+
+Aplicația va fi disponibilă la **http://localhost:3000** 🎉
+
+#### 6. (Optional) Open Prisma Studio
+
+Pentru a vizualiza și edita datele din database:
+
+```bash
+npm run prisma:studio
+```
+
+### Verificare Setup
+
+După pornirea serverului, verifică:
+
+- ✅ Homepage se încarcă la http://localhost:3000
+- ✅ Prisma Studio funcționează (dacă l-ai pornit)
+- ✅ Nu apar erori în consolă
+
+### Comenzi Disponibile
+
+```bash
+# Development
+npm run dev              # Start dev server (cu hot reload)
+
+# Database
+npm run prisma:generate  # Generate Prisma Client
+npm run prisma:migrate   # Run database migrations
+npm run prisma:seed      # Seed database cu date sample
+npm run prisma:studio    # Open Prisma Studio GUI
+
+# Build & Production
+npm run build            # Build pentru producție
+npm run start            # Start production server
+
+# Code Quality
+npm run lint             # Run ESLint
+npm run type-check       # Check TypeScript errors
+```
+
+### Troubleshooting
+
+**Eroare: "Can't reach database server"**
+- Verifică dacă PostgreSQL rulează: `pg_isready`
+- Verifică DATABASE_URL în .env
+- Verifică username/password/port
+
+**Eroare: "Prisma Client not generated"**
+```bash
+npm run prisma:generate
+```
+
+**Eroare: "Module not found"**
+```bash
+rm -rf node_modules package-lock.json
+npm install
+```
+
+**Port 3000 deja folosit**
+```bash
+# Schimbă portul
+PORT=3001 npm run dev
+```
 
 ## 📖 Documentație
 
