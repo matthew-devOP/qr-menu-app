@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { Breadcrumb, ProductCard } from '@/components/menu'
+import { Breadcrumb, ProductGrid } from '@/components/menu'
 import type { MenuProduct, BreadcrumbItem } from '@/types'
 
 // Mock data - will be replaced with database queries
@@ -238,7 +238,6 @@ export default async function SubcategoryPage({ params }: SubcategoryPageProps) 
   ]
 
   const availableProducts = data.products.filter((p) => p.isAvailable)
-  const unavailableProducts = data.products.filter((p) => !p.isAvailable)
 
   return (
     <div className="min-h-screen bg-background-primary pb-16">
@@ -272,32 +271,7 @@ export default async function SubcategoryPage({ params }: SubcategoryPageProps) 
       {/* Products Grid */}
       {data.products.length > 0 ? (
         <section className="container mx-auto px-4">
-          {/* Available Products */}
-          {availableProducts.length > 0 && (
-            <div className="mb-12">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {availableProducts.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Unavailable Products */}
-          {unavailableProducts.length > 0 && (
-            <div>
-              <div className="mb-6">
-                <h2 className="text-xl font-display font-semibold text-text-muted">
-                  Temporar Indisponibile
-                </h2>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {unavailableProducts.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </div>
-            </div>
-          )}
+          <ProductGrid products={data.products} />
         </section>
       ) : (
         // Empty State

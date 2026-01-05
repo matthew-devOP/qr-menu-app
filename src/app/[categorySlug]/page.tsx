@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { Breadcrumb, CategoryCard, ProductCard } from '@/components/menu'
+import { Breadcrumb, CategoryCard, ProductGrid } from '@/components/menu'
 import type { MenuCategory, MenuProduct, BreadcrumbItem } from '@/types'
 
 // Mock data - will be replaced with database queries
@@ -264,11 +264,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {category.products.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          <ProductGrid products={category.products} showUnavailable={!hasSubcategories} />
         </section>
       )}
 

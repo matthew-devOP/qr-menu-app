@@ -54,6 +54,24 @@ export const ALLERGENS = [
 export type Allergen = typeof ALLERGENS[number]
 
 /**
+ * Allergen Labels (Romanian translations)
+ */
+export const ALLERGEN_LABELS: Record<string, string> = {
+  gluten: 'Gluten',
+  lactose: 'Lactoză',
+  nuts: 'Nuci',
+  peanuts: 'Arahide',
+  soy: 'Soia',
+  eggs: 'Ouă',
+  fish: 'Pește',
+  shellfish: 'Fructe de mare',
+  celery: 'Țelină',
+  mustard: 'Muștar',
+  sesame: 'Susan',
+  sulfites: 'Sulfiți',
+}
+
+/**
  * Product Categories (for filtering)
  */
 export const PRODUCT_CATEGORIES = {
