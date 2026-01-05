@@ -1,7 +1,9 @@
 // TypeScript Type Definitions for QR Menu App
 // Based on Prisma schema models
 
-import { Decimal } from '@prisma/client/runtime/library'
+// Using Prisma.Decimal type alias instead of direct import
+// to avoid runtime dependency issues
+type Decimal = any // Prisma Decimal type
 
 /**
  * Venue (Restaurant/Lounge)

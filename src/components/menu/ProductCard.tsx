@@ -11,8 +11,8 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, onClick, className }: ProductCardProps) {
-  const hasDiscount = product.oldPrice && product.oldPrice > product.price
-  const discountPercent = hasDiscount
+  const hasDiscount = product.oldPrice !== undefined && product.oldPrice > product.price
+  const discountPercent = hasDiscount && product.oldPrice
     ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)
     : 0
 
