@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
+import { Header } from "@/components/menu";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -32,7 +33,18 @@ export default function RootLayout({
   return (
     <html lang="ro">
       <body className={`${inter.variable} ${playfair.variable} font-sans antialiased`}>
-        {children}
+        <Header showBack />
+        <main className="min-h-screen">
+          {children}
+        </main>
+        <footer className="border-t border-border-light bg-white mt-auto">
+          <div className="container mx-auto px-4 py-8">
+            <div className="text-center text-sm text-text-muted">
+              <p className="mb-2">&copy; {new Date().getFullYear()} INFINITY LOUNGE. All rights reserved.</p>
+              <p className="text-xs">Meniu digital interactiv</p>
+            </div>
+          </div>
+        </footer>
       </body>
     </html>
   );
