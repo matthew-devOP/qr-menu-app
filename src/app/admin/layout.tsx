@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { authOptions } from '@/lib/auth'
 import { AdminSidebar } from '@/components/admin/AdminSidebar'
 import { AdminHeader } from '@/components/admin/AdminHeader'
+import { Toaster } from '@/components/ui/toaster'
 
 export default async function AdminLayout({
   children,
@@ -30,6 +31,9 @@ export default async function AdminLayout({
           {children}
         </main>
       </div>
+
+      {/* Toast Notifications */}
+      <Toaster />
     </div>
   )
 }
