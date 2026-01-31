@@ -3,10 +3,12 @@
 
 generator client {
   provider = "prisma-client-js"
+  engineType = "binary"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Venue {
@@ -33,6 +35,8 @@ model Category {
   nameEn        String?
   slug          String
   description   String?
+  descriptionRo String?
+  descriptionEn String?
   image         String
   icon          String?
   order         Int           @default(0)
@@ -105,6 +109,7 @@ model QRCode {
   venueId     String
   venue       Venue     @relation(fields: [venueId], references: [id], onDelete: Cascade)
   name        String    // "Table 1", "Bar Counter", etc.
+  location    String?
   tableNumber String?
   url         String    // Full URL to menu
   qrImageUrl  String?   // Stored QR code image

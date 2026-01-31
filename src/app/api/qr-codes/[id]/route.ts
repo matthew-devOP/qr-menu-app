@@ -6,8 +6,9 @@ import { prisma } from '@/lib/db'
 // GET /api/qr-codes/[id] - Get single QR code
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
+  const params = await props.params;
   try {
     const qrCode = await prisma.qRCode.findUnique({
       where: { id: params.id },
@@ -33,8 +34,9 @@ export async function GET(
 // PUT /api/qr-codes/[id] - Update QR code
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
+  const params = await props.params;
   try {
     const session = await getServerSession(authOptions)
 
@@ -80,8 +82,9 @@ export async function PUT(
 // DELETE /api/qr-codes/[id] - Delete QR code
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
+  const params = await props.params;
   try {
     const session = await getServerSession(authOptions)
 

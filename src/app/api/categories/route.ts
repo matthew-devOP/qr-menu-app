@@ -46,24 +46,29 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check if slug already exists
-    const existing = await prisma.category.findUnique({
-      where: { slug },
-    })
-
-    if (existing) {
-      return NextResponse.json(
-        { error: 'Category with this slug already exists' },
-        { status: 400 }
-      )
-    }
-
     // Get venue ID (assuming first venue)
     const venue = await prisma.venue.findFirst()
 
     if (!venue) {
       return NextResponse.json(
         { error: 'No venue found' },
+        { status: 400 }
+      )
+    }
+
+    // Check if slug already exists
+    const existing = await prisma.category.findUnique({
+      where: {
+        venueId_slug: {
+          venueId: venue.id,
+          slug
+        }
+      },
+    })
+
+    if (existing) {
+      return NextResponse.json(
+        { error: 'Category with this slug already exists' },
         { status: 400 }
       )
     }
@@ -78,9 +83,11 @@ export async function POST(request: NextRequest) {
     const category = await prisma.category.create({
       data: {
         name,
+        nameRo: name, // Default to name
         nameEn: nameEn || name,
         slug,
         description,
+        descriptionRo: description, // Default to description
         descriptionEn: descriptionEn || description,
         image: image || '/images/placeholder-category.jpg',
         isActive: isActive !== undefined ? isActive : true,

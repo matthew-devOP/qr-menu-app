@@ -9,11 +9,11 @@
   }
 
   * {
-    @apply border-border;
+    @apply border-border-light;
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background-primary text-text-primary;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }

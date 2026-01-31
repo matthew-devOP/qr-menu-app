@@ -4,8 +4,9 @@ import { prisma } from '@/lib/db'
 // POST /api/qr-codes/[id]/scan - Increment scan count
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
+  const params = await props.params;
   try {
     // Check if QR code exists
     const qrCode = await prisma.qRCode.findUnique({
@@ -24,7 +25,7 @@ export async function POST(
       where: { id: params.id },
       data: {
         scans: qrCode.scans + 1,
-        lastScannedAt: new Date(),
+        lastScanned: new Date(),
       },
     })
 

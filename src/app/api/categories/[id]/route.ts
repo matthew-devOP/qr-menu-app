@@ -6,8 +6,9 @@ import { prisma } from '@/lib/db'
 // GET /api/categories/[id] - Get single category
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
+  const params = await props.params;
   try {
     const category = await prisma.category.findUnique({
       where: { id: params.id },
@@ -37,8 +38,9 @@ export async function GET(
 // PUT /api/categories/[id] - Update category
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
+  const params = await props.params;
   try {
     const session = await getServerSession(authOptions)
 
@@ -64,7 +66,12 @@ export async function PUT(
     // Check if slug is taken by another category
     if (slug && slug !== existing.slug) {
       const slugTaken = await prisma.category.findUnique({
-        where: { slug },
+        where: {
+          venueId_slug: {
+            venueId: existing.venueId,
+            slug
+          }
+        },
       })
 
       if (slugTaken) {
@@ -105,8 +112,9 @@ export async function PUT(
 // DELETE /api/categories/[id] - Delete category
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
+  const params = await props.params;
   try {
     const session = await getServerSession(authOptions)
 

@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/db'
+import { productSchema } from '@/lib/validations/product'
+import { z } from 'zod'
+import { slugify } from '@/lib/utils'
 
 // GET /api/products - Get all products
 export async function GET(request: NextRequest) {
@@ -56,6 +59,22 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
+
+    // Zod Validation
+    let validatedData;
+    try {
+      validatedData = productSchema.parse(body);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return NextResponse.json(
+          { error: 'Validation failed', details: error.issues },
+          { status: 400 }
+        )
+      }
+      throw error;
+    }
+
+    // Category and Subcategory verification remains
     const {
       name,
       nameEn,
@@ -70,15 +89,7 @@ export async function POST(request: NextRequest) {
       subcategoryId,
       isAvailable,
       isFeatured,
-    } = body
-
-    // Validation
-    if (!name || !price || !categoryId) {
-      return NextResponse.json(
-        { error: 'Name, price, and category are required' },
-        { status: 400 }
-      )
-    }
+    } = validatedData
 
     // Verify category exists
     const category = await prisma.category.findUnique({
@@ -109,14 +120,17 @@ export async function POST(request: NextRequest) {
     const product = await prisma.product.create({
       data: {
         name,
+        nameRo: name, // Default
         nameEn: nameEn || name,
+        slug: slugify(name), // Generate slug
         description,
+        descriptionRo: description, // Default
         descriptionEn: descriptionEn || description,
-        price: parseFloat(price),
-        oldPrice: oldPrice ? parseFloat(oldPrice) : null,
+        price,
+        oldPrice: oldPrice || null,
         image: image || '/images/placeholder-product.jpg',
         allergens: allergens || [],
-        nutrition: nutrition || {},
+        nutritionInfo: nutrition || {},
         categoryId,
         subcategoryId: subcategoryId || null,
         isAvailable: isAvailable !== undefined ? isAvailable : true,

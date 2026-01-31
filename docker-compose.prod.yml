@@ -1,44 +1,33 @@
-version: '3.8'
-
 services:
   app:
-    container_name: qr-menu-app
+    container_name: qr-menu-app-prod
     build:
       context: .
-      dockerfile: Dockerfile
-    restart: always
+      dockerfile: Dockerfile.prod
     ports:
       - "3009:3009"
+    env_file:
+      - .env
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/qr-menu-app?schema=public
       - NEXTAUTH_URL=http://localhost:3009
       - NEXTAUTH_SECRET=changeme_in_prod
     depends_on:
       - db
-    volumes:
-      - .:/app
-      - /app/node_modules
-    networks:
-      - qr-menu-network
+    restart: always
 
   db:
-    container_name: qr-menu-db
     image: postgres:15-alpine
-    restart: always
+    container_name: qr-menu-db-prod
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: qr-menu-app
-    ports:
-      - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - qr-menu-network
-
-networks:
-  qr-menu-network:
-    driver: bridge
+      - postgres_data_prod:/var/lib/postgresql/data
+    ports:
+      - "5433:5432" # Use different port to avoid conflict with dev db if running
+    restart: always
 
 volumes:
-  postgres_data:
+  postgres_data_prod:

@@ -6,8 +6,9 @@ import { prisma } from '@/lib/db'
 // GET /api/products/[id] - Get single product
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
+  const params = await props.params;
   try {
     const product = await prisma.product.findUnique({
       where: { id: params.id },
@@ -37,8 +38,9 @@ export async function GET(
 // PUT /api/products/[id] - Update product
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
+  const params = await props.params;
   try {
     const session = await getServerSession(authOptions)
 
@@ -114,7 +116,7 @@ export async function PUT(
         oldPrice: oldPrice !== undefined ? (oldPrice ? parseFloat(oldPrice) : null) : existing.oldPrice,
         image: image || existing.image,
         allergens: allergens !== undefined ? allergens : existing.allergens,
-        nutrition: nutrition !== undefined ? nutrition : existing.nutrition,
+        nutritionInfo: nutrition !== undefined ? nutrition : existing.nutritionInfo,
         categoryId: categoryId || existing.categoryId,
         subcategoryId: subcategoryId !== undefined ? subcategoryId : existing.subcategoryId,
         isAvailable: isAvailable !== undefined ? isAvailable : existing.isAvailable,
@@ -139,8 +141,9 @@ export async function PUT(
 // DELETE /api/products/[id] - Delete product
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
+  const params = await props.params;
   try {
     const session = await getServerSession(authOptions)
 
