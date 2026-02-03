@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { X } from 'lucide-react'
 import { toast } from 'sonner'
+import { slugify } from '@/lib/utils'
+import { SUCCESS_MESSAGES, ERROR_MESSAGES } from '@/lib/constants'
 
 interface CreateCategoryModalProps {
   isOpen: boolean
@@ -45,7 +47,7 @@ export function CreateCategoryModal({
         throw new Error(data.error || 'Failed to create category')
       }
 
-      toast.success('Category created successfully!')
+      toast.success(SUCCESS_MESSAGES.CREATED)
       onSuccess()
       onClose()
       // Reset form
@@ -59,26 +61,19 @@ export function CreateCategoryModal({
         isActive: true,
       })
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to create category')
+      toast.error(error instanceof Error ? error.message : ERROR_MESSAGES.GENERIC)
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  const generateSlug = (text: string) => {
-    return text
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '')
-  }
+  // Using centralized slugify from @/lib/utils
 
   const handleNameChange = (value: string) => {
     setFormData((prev) => ({
       ...prev,
       name: value,
-      slug: generateSlug(value),
+      slug: slugify(value),
     }))
   }
 

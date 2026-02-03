@@ -1,204 +1,10 @@
 import { notFound } from 'next/navigation'
+import { prisma } from '@/lib/db'
 import { Breadcrumb, ProductGrid } from '@/components/menu'
 import type { MenuProduct, BreadcrumbItem } from '@/types'
 
-// Mock data - will be replaced with database queries
-const mockData: Record<string, Record<string, {
-  categoryName: string
-  subcategoryName: string
-  description?: string
-  products: MenuProduct[]
-}>> = {
-  bar: {
-    'bauturi-racoritoare': {
-      categoryName: 'BAR',
-      subcategoryName: 'Băuturi Răcoritoare',
-      description: 'Răcoritoare și sucuri naturale',
-      products: [
-        {
-          id: 'p1',
-          name: 'Pepsi',
-          slug: 'pepsi',
-          description: 'Băutură răcoritoare carbogazoasă 330ml',
-          image: 'https://images.unsplash.com/photo-1629203851122-3726ecdf080e?w=800&h=800&fit=crop',
-          price: 8,
-          isAvailable: true,
-          isFeatured: false,
-          allergens: [],
-        },
-        {
-          id: 'p2',
-          name: 'Coca-Cola',
-          slug: 'coca-cola',
-          description: 'Băutură răcoritoare carbogazoasă 330ml',
-          image: 'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=800&h=800&fit=crop',
-          price: 8,
-          oldPrice: 10,
-          isAvailable: true,
-          isFeatured: true,
-          allergens: [],
-        },
-        {
-          id: 'p3',
-          name: 'Fanta',
-          slug: 'fanta',
-          description: 'Băutură răcoritoare cu portocale 330ml',
-          image: 'https://images.unsplash.com/photo-1624517452488-04869289c4ca?w=800&h=800&fit=crop',
-          price: 8,
-          isAvailable: true,
-          isFeatured: false,
-          allergens: [],
-        },
-        {
-          id: 'p7',
-          name: 'Sprite',
-          slug: 'sprite',
-          description: 'Băutură răcoritoare cu lămâie și lime 330ml',
-          image: 'https://images.unsplash.com/photo-1625740213416-e8ad332cd65b?w=800&h=800&fit=crop',
-          price: 8,
-          isAvailable: true,
-          isFeatured: false,
-          allergens: [],
-        },
-        {
-          id: 'p8',
-          name: 'Limonadă Naturală',
-          slug: 'limonada-naturala',
-          description: 'Limonadă fresh cu lămâie și mentă',
-          image: 'https://images.unsplash.com/photo-1523677011781-c91d1bbe2f9f?w=800&h=800&fit=crop',
-          price: 15,
-          isAvailable: true,
-          isFeatured: false,
-          allergens: [],
-        },
-      ],
-    },
-    'bauturi-calde': {
-      categoryName: 'BAR',
-      subcategoryName: 'Băuturi Calde',
-      description: 'Cafea și ceaiuri premium',
-      products: [
-        {
-          id: 'p3',
-          name: 'Espresso',
-          slug: 'espresso',
-          description: 'Cafea espresso intensă din boabe 100% Arabica',
-          image: 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=800&h=800&fit=crop',
-          price: 12,
-          isAvailable: true,
-          isFeatured: false,
-          allergens: [],
-        },
-        {
-          id: 'p4',
-          name: 'Cappuccino',
-          slug: 'cappuccino',
-          description: 'Cafea cu lapte spumat și cacao',
-          image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=800&h=800&fit=crop',
-          price: 15,
-          isAvailable: true,
-          isFeatured: true,
-          allergens: ['lactose'],
-        },
-        {
-          id: 'p9',
-          name: 'Latte',
-          slug: 'latte',
-          description: 'Cafea cu mult lapte spumat',
-          image: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=800&h=800&fit=crop',
-          price: 16,
-          isAvailable: true,
-          isFeatured: false,
-          allergens: ['lactose'],
-        },
-        {
-          id: 'p10',
-          name: 'Ceai Verde',
-          slug: 'ceai-verde',
-          description: 'Ceai verde premium cu iasomie',
-          image: 'https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=800&h=800&fit=crop',
-          price: 10,
-          isAvailable: true,
-          isFeatured: false,
-          allergens: [],
-        },
-      ],
-    },
-    'cocktail-uri': {
-      categoryName: 'BAR',
-      subcategoryName: 'Cocktail-uri',
-      description: 'Cocktail-uri clasice și signature',
-      products: [
-        {
-          id: 'p5',
-          name: 'Mojito',
-          slug: 'mojito',
-          description: 'Cocktail cu rom alb, mentă proaspătă, lime și sifon',
-          image: 'https://images.unsplash.com/photo-1551024601-bec78aea704b?w=800&h=800&fit=crop',
-          price: 28,
-          isAvailable: true,
-          isFeatured: true,
-          allergens: [],
-        },
-        {
-          id: 'p6',
-          name: 'Piña Colada',
-          slug: 'pina-colada',
-          description: 'Cocktail tropical cu rom, ananas și cremă de cocos',
-          image: 'https://images.unsplash.com/photo-1568330272043-085ad639954e?w=800&h=800&fit=crop',
-          price: 32,
-          isAvailable: false,
-          isFeatured: false,
-          allergens: ['lactose'],
-        },
-        {
-          id: 'p11',
-          name: 'Margarita',
-          slug: 'margarita',
-          description: 'Cocktail cu tequila, triple sec și suc de lime',
-          image: 'https://images.unsplash.com/photo-1574096079513-d8259312b785?w=800&h=800&fit=crop',
-          price: 30,
-          isAvailable: true,
-          isFeatured: true,
-          allergens: [],
-        },
-        {
-          id: 'p12',
-          name: 'Cosmopolitan',
-          slug: 'cosmopolitan',
-          description: 'Vodka, triple sec, suc de merișor și lime',
-          image: 'https://images.unsplash.com/photo-1536935338788-846bb9981813?w=800&h=800&fit=crop',
-          price: 29,
-          isAvailable: true,
-          isFeatured: false,
-          allergens: [],
-        },
-        {
-          id: 'p13',
-          name: 'Aperol Spritz',
-          slug: 'aperol-spritz',
-          description: 'Aperol, prosecco și apă minerală',
-          image: 'https://images.unsplash.com/photo-1546171753-97d7676e4602?w=800&h=800&fit=crop',
-          price: 26,
-          isAvailable: true,
-          isFeatured: false,
-          allergens: ['sulfites'],
-        },
-        {
-          id: 'p14',
-          name: 'Long Island Iced Tea',
-          slug: 'long-island-iced-tea',
-          description: 'Mix de 5 spirtoase, suc de lămâie și cola',
-          image: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800&h=800&fit=crop',
-          price: 35,
-          isAvailable: true,
-          isFeatured: true,
-          allergens: [],
-        },
-      ],
-    },
-  },
-}
+// Force dynamic rendering for database queries
+export const dynamic = 'force-dynamic'
 
 interface SubcategoryPageProps {
   params: Promise<{
@@ -207,9 +13,56 @@ interface SubcategoryPageProps {
   }>
 }
 
+async function getSubcategoryWithProducts(categorySlug: string, subcategorySlug: string) {
+  const subcategory = await prisma.subcategory.findFirst({
+    where: {
+      slug: subcategorySlug,
+      isActive: true,
+      category: {
+        slug: categorySlug,
+        isActive: true
+      }
+    },
+    include: {
+      category: {
+        select: { id: true, name: true, slug: true }
+      },
+      products: {
+        orderBy: [
+          { isFeatured: 'desc' },
+          { order: 'asc' }
+        ]
+      }
+    }
+  })
+
+  if (!subcategory) return null
+
+  // Transform products to MenuProduct format
+  const products: MenuProduct[] = subcategory.products.map((prod: typeof subcategory.products[number]) => ({
+    id: prod.id,
+    name: prod.name,
+    slug: prod.slug,
+    description: prod.description || undefined,
+    image: prod.image || undefined,
+    price: Number(prod.price),
+    oldPrice: prod.oldPrice ? Number(prod.oldPrice) : undefined,
+    isAvailable: prod.isAvailable,
+    isFeatured: prod.isFeatured,
+    allergens: prod.allergens
+  }))
+
+  return {
+    categoryName: subcategory.category.name,
+    subcategoryName: subcategory.name,
+    description: subcategory.description || undefined,
+    products
+  }
+}
+
 export async function generateMetadata({ params }: SubcategoryPageProps) {
   const { categorySlug, subcategorySlug } = await params
-  const data = mockData[categorySlug]?.[subcategorySlug]
+  const data = await getSubcategoryWithProducts(categorySlug, subcategorySlug)
 
   if (!data) {
     return {
@@ -225,7 +78,7 @@ export async function generateMetadata({ params }: SubcategoryPageProps) {
 
 export default async function SubcategoryPage({ params }: SubcategoryPageProps) {
   const { categorySlug, subcategorySlug } = await params
-  const data = mockData[categorySlug]?.[subcategorySlug]
+  const data = await getSubcategoryWithProducts(categorySlug, subcategorySlug)
 
   if (!data) {
     notFound()
@@ -309,3 +162,4 @@ export default async function SubcategoryPage({ params }: SubcategoryPageProps) 
     </div>
   )
 }
+

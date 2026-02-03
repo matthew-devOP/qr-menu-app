@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react'
 import { X } from 'lucide-react'
 import { toast } from 'sonner'
+import { slugify } from '@/lib/utils'
+import { SUCCESS_MESSAGES, ERROR_MESSAGES } from '@/lib/constants'
 
 interface Category {
   id: string
@@ -74,30 +76,23 @@ export function EditCategoryModal({
         throw new Error(data.error || 'Failed to update category')
       }
 
-      toast.success('Category updated successfully!')
+      toast.success(SUCCESS_MESSAGES.UPDATED)
       onSuccess()
       onClose()
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to update category')
+      toast.error(error instanceof Error ? error.message : ERROR_MESSAGES.GENERIC)
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  const generateSlug = (text: string) => {
-    return text
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '')
-  }
+  // Using centralized slugify from @/lib/utils
 
   const handleNameChange = (value: string) => {
     setFormData((prev) => ({
       ...prev,
       name: value,
-      slug: generateSlug(value),
+      slug: slugify(value),
     }))
   }
 

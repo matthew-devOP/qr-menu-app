@@ -11,7 +11,6 @@ services:
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/qr-menu-app?schema=public
       - NEXTAUTH_URL=http://localhost:3009
-      - NEXTAUTH_SECRET=changeme_in_prod
     depends_on:
       - db
     restart: always

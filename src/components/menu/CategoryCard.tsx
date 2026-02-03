@@ -23,7 +23,7 @@ export function CategoryCard({ category, className }: CategoryCardProps) {
       {/* Image Container */}
       <div className="relative aspect-[16/9] w-full overflow-hidden bg-background-secondary">
         <Image
-          src={category.image}
+          src={category.image || '/images/placeholder-category.jpg'}
           alt={category.name}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

@@ -32,18 +32,18 @@ export function ProductCard({ product, onClick, className }: ProductCardProps) {
       onKeyDown={
         onClick
           ? (e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                onClick()
-              }
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              onClick()
             }
+          }
           : undefined
       }
     >
       {/* Image Container */}
       <div className="relative aspect-square w-full overflow-hidden bg-background-secondary">
         <Image
-          src={product.image}
+          src={product.image || '/images/placeholder-product.jpg'}
           alt={product.name}
           fill
           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"

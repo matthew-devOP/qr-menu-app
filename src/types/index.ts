@@ -209,7 +209,7 @@ export interface MenuCategory {
   id: string
   name: string
   slug: string
-  image: string
+  image?: string
   description?: string
   subcategoriesCount: number
   productsCount: number
@@ -228,7 +228,7 @@ export interface MenuProduct {
   id: string
   name: string
   slug: string
-  image: string
+  image?: string
   price: number
   oldPrice?: number
   quantity?: string

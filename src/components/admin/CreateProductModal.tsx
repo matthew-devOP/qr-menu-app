@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { X } from 'lucide-react'
 import { toast } from 'sonner'
+import { ALLERGENS, ALLERGEN_LABELS, SUCCESS_MESSAGES, ERROR_MESSAGES } from '@/lib/constants'
 
 interface Category {
   id: string
@@ -111,7 +112,7 @@ export function CreateProductModal({
         throw new Error(data.error || 'Failed to create product')
       }
 
-      toast.success('Product created successfully!')
+      toast.success(SUCCESS_MESSAGES.CREATED)
       onSuccess()
       onClose()
       // Reset form
@@ -130,22 +131,13 @@ export function CreateProductModal({
         allergens: [],
       })
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to create product')
+      toast.error(error instanceof Error ? error.message : ERROR_MESSAGES.GENERIC)
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  const allergenOptions = [
-    'gluten',
-    'lactose',
-    'nuts',
-    'soy',
-    'eggs',
-    'fish',
-    'shellfish',
-    'sesame',
-  ]
+  // Using centralized ALLERGENS from @/lib/constants (12 items)
 
   const toggleAllergen = (allergen: string) => {
     setFormData((prev) => ({
@@ -322,18 +314,17 @@ export function CreateProductModal({
               Allergens
             </label>
             <div className="flex flex-wrap gap-2">
-              {allergenOptions.map((allergen) => (
+              {ALLERGENS.map((allergen) => (
                 <button
                   key={allergen}
                   type="button"
                   onClick={() => toggleAllergen(allergen)}
-                  className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-                    formData.allergens.includes(allergen)
+                  className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${formData.allergens.includes(allergen)
                       ? 'bg-primary text-white'
                       : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
-                  }`}
+                    }`}
                 >
-                  {allergen}
+                  {ALLERGEN_LABELS[allergen] || allergen}
                 </button>
               ))}
             </div>

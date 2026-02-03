@@ -1,35 +1,33 @@
 import { CategoryCard } from '@/components/menu'
+import { prisma } from '@/lib/db'
 import type { MenuCategory } from '@/types'
 
-// Mock data - will be replaced with database queries
-const mockCategories: MenuCategory[] = [
-  {
-    id: '1',
-    name: 'BAR',
-    slug: 'bar',
-    image: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=800&h=600&fit=crop',
-    subcategoriesCount: 3,
-    productsCount: 15,
-  },
-  {
-    id: '2',
-    name: 'MANCARE',
-    slug: 'mancare',
-    image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&h=600&fit=crop',
-    subcategoriesCount: 4,
-    productsCount: 28,
-  },
-  {
-    id: '3',
-    name: 'DESERT',
-    slug: 'desert',
-    image: 'https://images.unsplash.com/photo-1551024506-0bccd828d307?w=800&h=600&fit=crop',
-    subcategoriesCount: 2,
-    productsCount: 12,
-  },
-]
+// Force dynamic rendering for database queries
+export const dynamic = 'force-dynamic'
 
-export default function HomePage() {
+async function getCategories(): Promise<MenuCategory[]> {
+  const categories = await prisma.category.findMany({
+    where: { isActive: true },
+    include: {
+      subcategories: { where: { isActive: true } },
+      products: { where: { isAvailable: true } },
+    },
+    orderBy: { order: 'asc' },
+  })
+
+  return categories.map((cat: typeof categories[number]) => ({
+    id: cat.id,
+    name: cat.name,
+    slug: cat.slug,
+    image: cat.image || undefined,
+    subcategoriesCount: cat.subcategories.length,
+    productsCount: cat.products.length,
+  }))
+}
+
+export default async function HomePage() {
+  const categories = await getCategories()
+
   return (
     <div className="min-h-screen bg-background-primary">
       {/* Hero Section */}
@@ -66,11 +64,19 @@ export default function HomePage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {mockCategories.map((category) => (
-            <CategoryCard key={category.id} category={category} />
-          ))}
-        </div>
+        {categories.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            {categories.map((category) => (
+              <CategoryCard key={category.id} category={category} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-xl text-text-secondary">
+              Nu există categorii disponibile momentan.
+            </p>
+          </div>
+        )}
       </section>
 
       {/* Features Section */}
@@ -121,18 +127,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* Sprint Progress Indicator */}
-      <section className="container mx-auto px-4 py-12">
-        <div className="max-w-2xl mx-auto p-6 rounded-xl bg-brand-secondary/10 border border-brand-secondary/20">
-          <p className="text-sm font-medium text-brand-primary text-center">
-            🚀 Sprint 2 - Core Menu Features
-          </p>
-          <p className="text-xs text-text-secondary mt-2 text-center">
-            Status: Menu components created ✅ • Homepage updated ✅
-          </p>
-        </div>
-      </section>
     </div>
   )
 }
+

@@ -78,7 +78,7 @@ export function ProductModal({ product, isOpen, onClose }: ProductModalProps) {
         {/* Product Image */}
         <div className="relative aspect-[16/9] w-full">
           <Image
-            src={product.image}
+            src={product.image || '/images/placeholder-product.jpg'}
             alt={product.name}
             fill
             className="object-cover rounded-t-2xl"
