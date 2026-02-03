@@ -59,12 +59,29 @@ qr-menu-app/
 
 ## 🚀 Quick Start
 
-### Prerequisites
+### Option A: Docker (Recommended)
 
-- **Node.js** 18+ ([Download](https://nodejs.org/))
-- **PostgreSQL** 14+ ([Installation Guide](https://www.postgresql.org/download/))
-  - Alternatively: Use cloud database (Supabase, Railway, Neon - all have free tiers)
-- **npm** (comes with Node.js) or **yarn**
+```bash
+# Clone and enter directory
+git clone https://github.com/matthew-devOP/qr-menu-app.git
+cd qr-menu-app
+
+# Copy environment file
+cp .env.example .env
+
+# Start with Docker
+docker compose up -d
+
+# Run migrations and seed
+docker compose exec app npx prisma db push
+docker compose exec app npx prisma db seed
+```
+
+Aplicația va fi disponibilă la **http://localhost:3009** 🎉
+
+### Option B: Local Development
+
+#### Prerequisites
 
 ### Instalare Pas cu Pas
 
@@ -217,8 +234,10 @@ Documentația completă este disponibilă în folder-ul `/docs`:
 - [**Plan Detaliat**](docs/plan-detaliat.md) - Planificare completă a proiectului
 - [**Arhitectură**](docs/arhitectura.md) - Detalii tehnice & decizii arhitecturale
 - [**Design System**](docs/design-system.md) - Componente UI & guidelines
-- [**API Documentation**](docs/api/endpoints.md) - Endpoint-uri & exemple
-- [**Sprinturi**](docs/sprinturi/overview.md) - Planificare & tracking
+- [**API Documentation**](docs/API_DOCUMENTATION.md) - Endpoint-uri & exemple
+- [**Current Status**](docs/CURRENT_IMPLEMENTATION_STATUS.md) - Status implementare
+- [**Changelog**](docs/CHANGELOG.md) - Istoricul versiunilor
+- [**Development Log**](docs/DEVELOPMENT_LOG.md) - Jurnal sesiuni de lucru
 
 ## 🎯 Roadmap
 
@@ -266,6 +285,6 @@ Pentru întrebări sau sugestii, contactați echipa de dezvoltare.
 
 ---
 
-**Status:** 🟡 In Development
-**Versiune:** 0.1.0 (Alpha)
-**Ultima actualizare:** Ianuarie 2026
+**Status:** 🟢 Production Ready
+**Versiune:** 0.3.0
+**Ultima actualizare:** Februarie 2026
