@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 import { Header } from "@/components/menu";
+import { QRScanTracker } from "@/components/tracking/QRScanTracker";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -33,6 +35,10 @@ export default function RootLayout({
   return (
     <html lang="ro">
       <body className={`${inter.variable} ${playfair.variable} font-sans antialiased`}>
+        {/* QR Scan Tracker - reads ?qr= param and tracks scans */}
+        <Suspense fallback={null}>
+          <QRScanTracker />
+        </Suspense>
         <Header showBack />
         <main className="min-h-screen">
           {children}
@@ -49,3 +55,4 @@ export default function RootLayout({
     </html>
   );
 }
+
